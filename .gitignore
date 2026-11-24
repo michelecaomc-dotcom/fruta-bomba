@@ -1,0 +1,6 @@
+# sorgenti non servono al sito pubblicato (restano in locale)
+sorgenti/
+*.pyc
+__pycache__/
+anteprima-opere.jpg
+anteprima-allegati.jpg
