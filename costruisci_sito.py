@@ -47,6 +47,8 @@ SITO = {
         "Quattro opere in download gratuito."
     ),
     "url": "https://frutabombafrutabomba.blogspot.com/",
+    # indirizzo definitivo del sito (canonical + og:url)
+    "url_canonico": "https://michelecaomc-dotcom.github.io/SHOCKNOMICS/fruta-bomba/",
     "autore": "Sanmicheli",
     "email": "mila.michele@yahoo.com",
     "logo_url": "https://michelecaomc-dotcom.github.io/SHOCKNOMICS/",
@@ -55,7 +57,7 @@ SITO = {
     "licenza_url": "https://creativecommons.org/licenses/by-nc-nd/4.0/deed.it",
     "img_base": "img",                # in blogger.html puoi mettere un URL assoluto
     # base pubblica dove stanno img/ e download/ (letta da blogger.html)
-    "asset_base_blogger": "https://michelecaomc-dotcom.github.io/fruta-bomba",
+    "asset_base_blogger": "https://michelecaomc-dotcom.github.io/SHOCKNOMICS/fruta-bomba",
 }
 
 LARGHEZZA_FULL = 1800
@@ -406,6 +408,7 @@ def download_html(op, img_base):
 
 
 def json_ld(opere):
+    base = (SITO["url_canonico"] or SITO["url"]).rstrip("/") + "/"
     opere_json = []
     for op in opere:
         if not op["download"]:
@@ -419,8 +422,8 @@ def json_ld(opere):
             "artform": "Digital artwork",
             "dateCreated": op["anno"],
             "creator": {"@type": "Person", "name": SITO["autore"]},
-            "image": SITO["url"] + f"img/{op['id']}-full.jpg",
-            "thumbnailUrl": SITO["url"] + f"img/{op['id']}-thumb.jpg",
+            "image": base + f"img/{op['id']}-full.jpg",
+            "thumbnailUrl": base + f"img/{op['id']}-thumb.jpg",
             "license": SITO["licenza_url"],
         })
     dati = {
@@ -428,7 +431,7 @@ def json_ld(opere):
         "@type": "CollectionPage",
         "name": SITO["titolo"],
         "description": SITO["descrizione"],
-        "url": SITO["url"],
+        "url": base,
         "inLanguage": "it-IT",
         "author": {"@type": "Person", "name": SITO["autore"]},
         "hasPart": opere_json,
@@ -482,7 +485,11 @@ def pagina(opere, img_base, per_blogger=False):
     downloads = "".join(download_html(o, img_base) for o in scaricabili)
     anno = "2026"
     jsonld = json_ld(opere)
-    og_img = f'{img_base}/{scaricabili[0]["id"]}-full.jpg' if scaricabili else f'{img_base}/{opere[0]["id"]}-full.jpg'
+    canonico = (SITO["url_canonico"] or SITO["url"]).rstrip("/") + "/"
+    # og:image deve essere un indirizzo assoluto
+    og_base = img_base if img_base.startswith("http") else canonico + img_base.lstrip("/")
+    primo = (scaricabili[0]["id"] if scaricabili else opere[0]["id"])
+    og_img = f'{og_base}/{primo}-full.jpg'
 
     corpo = f'''
 <header class="top">
@@ -655,13 +662,13 @@ def pagina(opere, img_base, per_blogger=False):
 <meta name="description" content="{SITO["descrizione"]}">
 <meta name="author" content="{SITO["autore"]}">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="{SITO["url"]}">
+<link rel="canonical" href="{canonico}">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="it_IT">
 <meta property="og:site_name" content="{SITO["nome"]}">
 <meta property="og:title" content="{SITO["titolo"]}">
 <meta property="og:description" content="{SITO["descrizione"]}">
-<meta property="og:url" content="{SITO["url"]}">
+<meta property="og:url" content="{canonico}">
 <meta property="og:image" content="{og_img}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{SITO["titolo"]}">

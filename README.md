@@ -2,6 +2,13 @@
 
 Sito della galleria: 15 opere in tre serie (Sovereign, Giardino, Barocco),
 4 download gratuiti.
+
+**Indirizzo pubblico:** https://michelecaomc-dotcom.github.io/SHOCKNOMICS/fruta-bomba/
+
+Il sito vive dentro il repository SHOCKNOMICS, in una cartella sua
+(`fruta-bomba/`): è una pagina a parte e non tocca la home, i PDF né
+gli altri documenti.
+
 Tutto si genera dai file di questa cartella.
 
 ```
@@ -14,20 +21,40 @@ sito_frutabomba/
 ├─ img/                  ← immagini ottimizzate JPG + WebP (generate)
 ├─ download/             ← JPG + PDF A4 dei pezzi gratuiti (generati)
 ├─ costruisci_sito.py    ← rigenera tutto
+├─ pubblica_shocknomics.py ← rigenera, copia in SHOCKNOMICS e pubblica
 ├─ importa_immagini.py   ← aggiunge le immagini nuove al catalogo
 └─ anteprima.py          ← foglio di contatto di tutte le opere
 ```
 
-## Rigenerare il sito
+## Pubblicare (un comando)
+
+```powershell
+python pubblica_shocknomics.py
+```
+
+Rigenera il sito, copia `index.html`, `img/` e `download/` nella cartella
+`fruta-bomba/` del repository SHOCKNOMICS, fa commit e push. Dopo un minuto
+GitHub Pages è aggiornato.
+
+Il repository locale di SHOCKNOMICS sta in `..\Repo SHOCKNOMICS`. Se non
+c'è:
+
+```powershell
+cd ..
+git clone https://github.com/michelecaomc-dotcom/SHOCKNOMICS.git "Repo SHOCKNOMICS"
+```
+
+## Rigenerare solo il sito
 
 ```powershell
 python costruisci_sito.py
 ```
 
-Prima di pubblicare, apri `costruisci_sito.py` e cambia in cima al file:
+Indirizzi e contatti sono in cima a `costruisci_sito.py`:
 
-- `SITO["email"]` → la tua email vera (adesso è un segnaposto);
-- `SITO["url"]` → l'indirizzo definitivo del sito.
+- `SITO["email"]` → `mila.michele@yahoo.com`
+- `SITO["url_canonico"]` → indirizzo pubblico del sito (canonical e og:url)
+- `SITO["url"]` → il blog, usato nei link "collezione di stampe"
 
 ## Aggiungere opere
 
@@ -49,32 +76,13 @@ reader. Descrivi cosa si vede, in italiano, senza parole chiave ammassate.
 
 ### Le immagini su Blogger
 
-`blogger.html` punta a `img/...`. Su Blogger quei file non esistono: le
-immagini vanno caricate nel blog. Due modi:
+`blogger.html` non contiene immagini: punta agli stessi file del sito, già
+online dentro SHOCKNOMICS (`SITO["asset_base_blogger"]`). Quindi la pagina
+Blogger resta leggerissima e le immagini si aggiornano da sole quando
+ripubblichi il sito con `pubblica_shocknomics.py`.
 
-**A. Rapido (consigliato)** — carica le immagini in un post qualunque
-(bozza), copia l'indirizzo che Blogger genera (`https://blogger.googleusercontent.com/...`)
-e sostituisci nel file tutte le occorrenze di `img/` con quell'indirizzo.
-
-**B. Più solido** — metti questa cartella su GitHub Pages e carica i file
-la dentro una volta sola:
-
-```powershell
-# dentro sito_frutabomba/
-git init
-git add .
-git commit -m "sito fruta bomba"
-gh repo create fruta-bomba --public --source=. --push
-gh api -X POST repos/{owner}/fruta-bomba/pages -f source[branch]=main -f source[path]=/
-```
-
-Poi in `costruisci_sito.py` imposta:
-
-```python
-SITO["img_base"] = "https://TUONOME.github.io/fruta-bomba/img"
-```
-
-e rigenera: `blogger.html` userà quegli indirizzi e resterà leggero.
+Se un giorno cambi indirizzo al sito, aggiorna `SITO["asset_base_blogger"]`
+e rigenera.
 
 ### Impostazioni Blogger da sistemare
 
