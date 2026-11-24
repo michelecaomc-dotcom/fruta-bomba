@@ -634,8 +634,11 @@ def pagina(opere, img_base, per_blogger=False):
 
     if per_blogger:
         # frammento per una pagina Blogger: niente <html>, <head>, <body>
-        return f'''<!-- Fruta Bomba — incolla tutto questo in una pagina Blogger, vista HTML -->
-<style>
+        font_url = ("https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800"
+                    "&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;"
+                    "1,9..144,400&display=swap")
+        return f'''<style>
+@import url("{font_url}");
 {CSS}
 </style>
 <div class="frutabomba">
