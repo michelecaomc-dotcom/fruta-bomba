@@ -54,7 +54,8 @@ SITO = {
     "licenza": "CC BY-NC-ND 4.0",
     "licenza_url": "https://creativecommons.org/licenses/by-nc-nd/4.0/deed.it",
     "img_base": "img",                # in blogger.html puoi mettere un URL assoluto
-    "asset_base_blogger": "",         # es. https://utente.github.io/repo (vuoto = percorsi relativi)
+    # base pubblica dove stanno img/ e download/ (letta da blogger.html)
+    "asset_base_blogger": "https://michelecaomc-dotcom.github.io/fruta-bomba",
 }
 
 LARGHEZZA_FULL = 1800
@@ -711,7 +712,9 @@ def main():
 
     print("3) Scrivo le pagine...")
     scrivi("index.html", pagina(opere, SITO["img_base"]))
-    scrivi("blogger.html", pagina(opere, SITO["img_base"], per_blogger=True))
+    base_blogger = SITO["asset_base_blogger"].rstrip("/")
+    img_blogger = (base_blogger + "/img") if base_blogger else SITO["img_base"]
+    scrivi("blogger.html", pagina(opere, img_blogger, per_blogger=True))
     scrivi("robots.txt",
            "User-agent: *\nAllow: /\nSitemap: "
            + SITO["url"].rstrip("/") + "/sitemap.xml\n")
