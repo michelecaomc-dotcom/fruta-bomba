@@ -387,8 +387,11 @@ def card_html(op, img_base):
 
 def download_html(op, img_base):
     e = html.escape
-    base = img_base[:-4] if img_base.endswith("/img") else ""
-    dl = (base + "/download/") if base else ""
+    # img_base è "img" (percorso relativo) oppure "https://sito/img"
+    if img_base.endswith("/img"):
+        dl = img_base[:-4] + "/download/"
+    else:
+        dl = "download/"
     jpg = op["_download_jpg"].split("/")[-1]
     pdf = op["_download_pdf"].split("/")[-1]
     return f'''
